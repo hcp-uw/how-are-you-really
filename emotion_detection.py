@@ -1,15 +1,23 @@
-import pandas as pd
+#!/usr/bin/env python3
+
 import numpy as np
-from keras.models import Sequential
-from keras.layers.core import Flatten, Dense, Dropout
-from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2D
-from keras.optimizers import SGD
-from keras.utils import to_categorical
+import pandas as pd
 
-# import data set
+from tensorflow.keras.utils import to_categorical
+
+from keras.models import Model
+from keras.layers import Input, Dense, Flatten, Dropout, BatchNormalization
+from keras.layers.convolutional import Conv2D
+from keras.layers.pooling import MaxPooling2D
+from tensorflow.keras.optimizers import Adam
+
+# load data set
 emotion_data = pd.read_csv('./fer2013.csv')
+emotion_data.head()
 
-# split into testing and training image pixels
+print("***** loaded data set")
+
+# prepare data
 X_train = []
 y_train = []
 X_test = []
@@ -23,76 +31,130 @@ for index, row in emotion_data.iterrows():
         X_test.append(np.array(k))
         y_test.append(row['emotion'])
 
-# convert into numpy arrays
-X_train = np.array(X_train)
-y_train = np.array(y_train)
-X_test = np.array(X_test)
-y_test = np.array(y_test)
-
-X_train = X_train.reshape(X_train.shape[0], 48, 48, 1)
-X_test = X_test.reshape(X_test.shape[0], 48, 48, 1)
+X_train = np.array(X_train, dtype = 'uint8')
+y_train = np.array(y_train, dtype = 'uint8')
+X_test = np.array(X_test, dtype = 'uint8')
+y_test = np.array(y_test, dtype = 'uint8')
 
 y_train= to_categorical(y_train, num_classes=7)
 y_test = to_categorical(y_test, num_classes=7)
 
-# initialize cnn model
-model = Sequential()
-model.add(ZeroPadding2D((1, 1), input_shape=(48, 48, 1)))
-model.add(Convolution2D(64, 3, 3, activation='relu'))
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(64, 3, 3, activation='relu'))
-model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+print("***** prepared data")
 
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(128, 3, 3, activation='relu'))
-model.add(ZeroPadding2D((1,1)))
-model.add(Convolution2D(128, 3, 3, activation='relu'))
-model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+# reshape data
+X_train = X_train.reshape(X_train.shape[0], 48, 48, 1)
+X_test = X_test.reshape(X_test.shape[0], 48, 48, 1)
 
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(256, 3, 3, activation='relu'))
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(256, 3, 3, activation='relu'))
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(256, 3, 3, activation='relu'))
-model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+print("***** reshaped data")
 
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(512, 3, 3, activation='relu'))
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(512, 3, 3, activation='relu'))
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(512, 3, 3, activation='relu'))
-model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+# image augmentation
+from keras.preprocessing.image import ImageDataGenerator 
+datagen = ImageDataGenerator( 
+    rescale=1./255,
+    rotation_range = 10,
+    horizontal_flip = True,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    fill_mode = 'nearest')
 
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(512, 3, 3, activation='relu'))
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(512, 3, 3, activation='relu'))
-model.add(ZeroPadding2D((1, 1)))
-model.add(Convolution2D(512, 3, 3, activation='relu'))
-model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+testgen = ImageDataGenerator(rescale=1./255)
+datagen.fit(X_train)
 
-model.add(Flatten())
-model.add(Dense(4096, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(4096, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(7, activation='softmax'))
+batch_size = 64
 
-# compile the model
-model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+print("***** image augmentation done")
 
-# fit the data for training and validation
-model.fit(X_train, y_train, batch_size=32, epochs=30, verbose=1, validation_data=(X_test, y_test))
+# fit generator to data
+train_flow = datagen.flow(X_train, y_train, batch_size=batch_size) 
+test_flow = testgen.flow(X_test, y_test, batch_size=batch_size)
 
-# evaluate the model
-loss_and_metrics = model.evaluate(X_test, y_test)
-print(loss_and_metrics)
+print("***** fitted generator to data")
 
-# serialize and save the model
+# build model using cnn
+def build_model(input_shape=(48,48,1)):
+    # first input model
+    visible = Input(shape=input_shape, name='input')
+    num_classes = 7
+    # 1st block
+    conv1_1 = Conv2D(64, kernel_size=3, activation='relu', padding='same', name = 'conv1_1')(visible)
+    conv1_1 = BatchNormalization()(conv1_1)
+    conv1_2 = Conv2D(64, kernel_size=3, activation='relu', padding='same', name = 'conv1_2')(conv1_1)
+    conv1_2 = BatchNormalization()(conv1_2)
+    pool1_1 = MaxPooling2D(pool_size=(2,2), name = 'pool1_1')(conv1_2)
+    drop1_1 = Dropout(0.3, name = 'drop1_1')(pool1_1)
+    # 2nd block
+    conv2_1 = Conv2D(128, kernel_size=3, activation='relu', padding='same', name = 'conv2_1')(drop1_1)
+    conv2_1 = BatchNormalization()(conv2_1)
+    conv2_2 = Conv2D(128, kernel_size=3, activation='relu', padding='same', name = 'conv2_2')(conv2_1)
+    conv2_2 = BatchNormalization()(conv2_2)
+    conv2_3 = Conv2D(128, kernel_size=3, activation='relu', padding='same', name = 'conv2_3')(conv2_2)
+    conv2_2 = BatchNormalization()(conv2_3)
+    pool2_1 = MaxPooling2D(pool_size=(2,2), name = 'pool2_1')(conv2_3)
+    drop2_1 = Dropout(0.3, name = 'drop2_1')(pool2_1)
+    # 3rd block
+    conv3_1 = Conv2D(256, kernel_size=3, activation='relu', padding='same', name = 'conv3_1')(drop2_1)
+    conv3_1 = BatchNormalization()(conv3_1)
+    conv3_2 = Conv2D(256, kernel_size=3, activation='relu', padding='same', name = 'conv3_2')(conv3_1)
+    conv3_2 = BatchNormalization()(conv3_2)
+    conv3_3 = Conv2D(256, kernel_size=3, activation='relu', padding='same', name = 'conv3_3')(conv3_2)
+    conv3_3 = BatchNormalization()(conv3_3)
+    conv3_4 = Conv2D(256, kernel_size=3, activation='relu', padding='same', name = 'conv3_4')(conv3_3)
+    conv3_4 = BatchNormalization()(conv3_4)
+    pool3_1 = MaxPooling2D(pool_size=(2,2), name = 'pool3_1')(conv3_4)
+    drop3_1 = Dropout(0.3, name = 'drop3_1')(pool3_1)
+    # 4th block
+    conv4_1 = Conv2D(256, kernel_size=3, activation='relu', padding='same', name = 'conv4_1')(drop3_1)
+    conv4_1 = BatchNormalization()(conv4_1)
+    conv4_2 = Conv2D(256, kernel_size=3, activation='relu', padding='same', name = 'conv4_2')(conv4_1)
+    conv4_2 = BatchNormalization()(conv4_2)
+    conv4_3 = Conv2D(256, kernel_size=3, activation='relu', padding='same', name = 'conv4_3')(conv4_2)
+    conv4_3 = BatchNormalization()(conv4_3)
+    conv4_4 = Conv2D(256, kernel_size=3, activation='relu', padding='same', name = 'conv4_4')(conv4_3)
+    conv4_4 = BatchNormalization()(conv4_4)
+    pool4_1 = MaxPooling2D(pool_size=(2,2), name = 'pool4_1')(conv4_4)
+    drop4_1 = Dropout(0.3, name = 'drop4_1')(pool4_1)
+    # 5th block
+    conv5_1 = Conv2D(512, kernel_size=3, activation='relu', padding='same', name = 'conv5_1')(drop4_1)
+    conv5_1 = BatchNormalization()(conv5_1)
+    conv5_2 = Conv2D(512, kernel_size=3, activation='relu', padding='same', name = 'conv5_2')(conv5_1)
+    conv5_2 = BatchNormalization()(conv5_2)
+    conv5_3 = Conv2D(512, kernel_size=3, activation='relu', padding='same', name = 'conv5_3')(conv5_2)
+    conv5_3 = BatchNormalization()(conv5_3)
+    conv5_4 = Conv2D(512, kernel_size=3, activation='relu', padding='same', name = 'conv5_4')(conv5_3)
+    conv5_3 = BatchNormalization()(conv5_3)
+    pool5_1 = MaxPooling2D(pool_size=(2,2), name = 'pool5_1')(conv5_4)
+    drop5_1 = Dropout(0.3, name = 'drop5_1')(pool5_1)
+    # flatten and output
+    flatten = Flatten(name = 'flatten')(drop5_1)
+    ouput = Dense(num_classes, activation='softmax', name = 'output')(flatten)
+    # create model 
+    model = Model(inputs =visible, outputs = ouput)
+    # summary layers
+    print(model.summary())
+    
+    return model
+
+# compile model
+model = build_model()
+opt = Adam(learning_rate=0.0001, decay=1e-6)
+model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
+
+print("***** compiled model")
+
+# train model
+num_epochs = 100  
+history = model.fit_generator(train_flow, 
+        steps_per_epoch=len(X_train) / batch_size, 
+        epochs=num_epochs,  
+        verbose=1,  
+        validation_data=test_flow,
+        validation_steps=len(X_test) / batch_size)
+
+print("***** trained model")
+
+# save model
 model_json = model.to_json()
 with open("model.json", "w") as json_file:
     json_file.write(model_json)
 model.save_weights("model.h5")
-print("Saved model to disk")
+print("***** saved model")
