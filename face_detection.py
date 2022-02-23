@@ -26,11 +26,14 @@ def detect_face(image_url):
         return None
 
     rects = frontalface_detector(image, 1)
+
     if len(rects) < 1:
         return "No Face Detected"
+    
     for (i, rect) in enumerate(rects):
         (x, y, w, h) = rect_to_bb(rect)
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    
     plt.imshow(image, interpolation='nearest')
     plt.axis('off')
     plt.show()
