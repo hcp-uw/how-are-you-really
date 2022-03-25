@@ -2,9 +2,7 @@
 
 import numpy as np
 import pandas as pd
-
 from tensorflow.keras.utils import to_categorical
-
 from keras.models import Model
 from keras.layers import Input, Dense, Flatten, Dropout, BatchNormalization
 from keras.layers.convolutional import Conv2D
@@ -48,8 +46,8 @@ X_test = X_test.reshape(X_test.shape[0], 48, 48, 1)
 print("***** reshaped data")
 
 # image augmentation
-from keras.preprocessing.image import ImageDataGenerator 
-datagen = ImageDataGenerator( 
+from keras.preprocessing.image import ImageDataGenerator
+datagen = ImageDataGenerator(
     rescale=1./255,
     rotation_range = 10,
     horizontal_flip = True,
@@ -65,7 +63,7 @@ batch_size = 64
 print("***** image augmentation done")
 
 # fit generator to data
-train_flow = datagen.flow(X_train, y_train, batch_size=batch_size) 
+train_flow = datagen.flow(X_train, y_train, batch_size=batch_size)
 test_flow = testgen.flow(X_test, y_test, batch_size=batch_size)
 
 print("***** fitted generator to data")
@@ -127,11 +125,11 @@ def build_model(input_shape=(48,48,1)):
     # flatten and output
     flatten = Flatten(name = 'flatten')(drop5_1)
     ouput = Dense(num_classes, activation='softmax', name = 'output')(flatten)
-    # create model 
+    # create model
     model = Model(inputs =visible, outputs = ouput)
     # summary layers
     print(model.summary())
-    
+
     return model
 
 # compile model
@@ -142,11 +140,11 @@ model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy
 print("***** compiled model")
 
 # train model
-num_epochs = 100  
-history = model.fit_generator(train_flow, 
-        steps_per_epoch=len(X_train) / batch_size, 
-        epochs=num_epochs,  
-        verbose=1,  
+num_epochs = 100
+history = model.fit_generator(train_flow,
+        steps_per_epoch=len(X_train) / batch_size,
+        epochs=num_epochs,
+        verbose=1,
         validation_data=test_flow,
         validation_steps=len(X_test) / batch_size)
 
