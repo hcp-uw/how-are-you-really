@@ -20,24 +20,32 @@
 </head>
  
 <body>
-<div id="container">
-	<video autoplay="true" id="videoElement">
-	
-	</video>
+<div id="camera">
+	<video autoplay="true" id="videoElement"></video>
+	<button id="capture">Capture</button>
 </div>
+<canvas id="canvas"></canvas>
 <script>
-var video = document.querySelector("#videoElement");
+const video = document.querySelector("#videoElement");
+const captureButton = document.querySelector("#capture")
 
+// stream video from webcam
 if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ video: true })
     .then(function (stream) {
-        // TODO: send request to server
         video.srcObject = stream;
     })
     .catch(function (err) {
         console.log(err.name + ": " + err.message);
     });
 }
+
+// when capture button clicked, capture frame
+captureButton.addEventListener("click", function (e) {
+	// capture frame
+	// send to server
+	e.preventDefault();
+});
 </script>
 </body>
 </html>
