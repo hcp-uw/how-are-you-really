@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <title>Display Webcam Stream</title>
+<<<<<<< HEAD
 <script src="static/lib/jquery-3.6.0.min.js"></script> 
+=======
+>>>>>>> 01ff58af577a0f0033e42fd97e2e6816f86398a3
 
 <style>
 #container {
@@ -17,33 +20,47 @@
 	height: 375px;
 	background-color: #666;
 }
+#canvas {
+	display: hidden
+}
 </style>
 </head>
- 
+
 <body>
 <div id="camera">
 	<video autoplay="true" id="videoElement"></video>
 	<button id="capture">Capture</button>
 </div>
-<canvas id="canvas"></canvas>
+<canvas id="canvas">
+	<div class="output">
+    <img id="photo" alt="The screen capture will appear in this box.">
+  </div>
+</canvas>
 <script>
 const video = document.querySelector("#videoElement");
 const captureButton = document.querySelector("#capture")
 
-// stream video from webcam
 if (navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ video: true })
-    .then(function (stream) {
-        video.srcObject = stream;
-    })
-    .catch(function (err) {
-        console.log(err.name + ": " + err.message);
-    });
+	navigator.mediaDevices.getUserMedia({ video: true })
+	.then(function (stream) {
+			video.srcObject = stream;
+	})
+	.catch(function (err) {
+			console.log(err.name + ": " + err.message);
+	});
 }
+
+let canvas = document.getElementById("canvas");
+let photo = document.getElementById('photo');
+let width = video.clientWidth;
+let height = video.clientHeight;
+canvas.setAttribute('width', width);
+canvas.setAttribute('height', height);
 
 // when capture button clicked, capture frame
 captureButton.addEventListener("click", function (e) {
 	// capture frame
+	takepicture();
 	// send to server
 	$.ajax({
 		url: "/analyze",
@@ -56,7 +73,33 @@ captureButton.addEventListener("click", function (e) {
 		}
 	});
 	e.preventDefault();
-});
+}, false);
+
+clearphoto();
+
+function clearphoto() {
+	var context = canvas.getContext('2d');
+	context.fillStyle = "#AAA";
+	context.fillRect(0, 0, canvas.width, canvas.height);
+
+	var data = canvas.toDataURL('image/png');
+	photo.setAttribute('src', data);
+}
+
+function takepicture() {
+	var context = canvas.getContext('2d');
+	if (width && height) {
+		canvas.width = width;
+		canvas.height = height;
+		context.drawImage(video, 0, 0, width, height);
+
+		var data = canvas.toDataURL('image/png');
+		photo.setAttribute('src', data);
+	} else {
+		clearphoto();
+	}
+}
+// stream video from webcam
 </script>
 </body>
 </html>
