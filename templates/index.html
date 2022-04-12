@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Display Webcam Stream</title>
-<script src="static/lib/jquery-3.6.0.min.js"></script> 
+<script src="static/lib/jquery-3.6.0.min.js"></script>
 
 <style>
 #container {
@@ -59,11 +59,12 @@ captureButton.addEventListener("click", function (e) {
 	// capture frame
 	takepicture();
 	// send to server
+	const dataURL = canvas.toDataURL();
 	$.ajax({
 		url: "/analyze",
 		type: "POST",
 		data: {
-			// imageBase64: dataURL
+			imageBase64: dataURL
 		},
 		success: function (result) {
 			console.log(result);
