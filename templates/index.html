@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>Display Webcam Stream</title>
- 
+<script src="static/lib/jquery-3.6.0.min.js"></script> 
+
 <style>
 #container {
 	margin: 0px auto;
@@ -44,6 +45,16 @@ if (navigator.mediaDevices.getUserMedia) {
 captureButton.addEventListener("click", function (e) {
 	// capture frame
 	// send to server
+	$.ajax({
+		url: "/analyze",
+		type: "POST",
+		data: {
+			// imageBase64: dataURL
+		},
+		success: function (result) {
+			console.log(result);
+		}
+	});
 	e.preventDefault();
 });
 </script>

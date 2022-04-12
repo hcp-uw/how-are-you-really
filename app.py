@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template, request
 
 app = Flask(__name__)
 
@@ -7,6 +7,9 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/analyze")
+@app.route("/analyze", methods=["POST"])
 def analayze():
-    return None
+    return {
+        "emotion": "happy",
+        "confidence": 1.0
+    }
