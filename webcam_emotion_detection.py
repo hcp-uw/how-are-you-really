@@ -13,6 +13,7 @@ face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 #TODO: replace with image array passed in
 # Turns array into image
 def readFace(imgArray):
+
     # make prediction
     # haar_cascade only takes grayscale images; convert into grayscale
     gray_image = cv2.cvtColor(imgArray, cv2.COLOR_BGR2GRAY)
