@@ -5,6 +5,7 @@ from PIL import Image
 import base64
 import re
 from io import BytesIO
+import webcam_emotion_detection
 
 
 app = Flask(__name__)
@@ -20,9 +21,8 @@ def analyze():
     img_bytes = base64.b64decode(re.sub('^data:image/.+;base64,', '', data_url))
     img = Image.open(BytesIO(img_bytes))
     img  = np.array(img)
-    return {
-        "data": img.tolist()
-    }
+    data = webcam_emotion_detection.readFace(img)
+    return data
 
     """image_b64 = request.values['imageBase64']
     image_b64 = re.sub('^data:image/.+;base64,', '', image_b64).decode('base64')
