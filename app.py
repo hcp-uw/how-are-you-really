@@ -22,3 +22,7 @@ def analyze():
     img = np.array(img)
     data = webcam_emotion_detection.readFace(img)
     return data
+
+@app.route("/video_feed")
+def video_feed():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')

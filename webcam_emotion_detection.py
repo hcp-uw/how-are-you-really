@@ -1,14 +1,28 @@
-# load saved model
-from tensorflow.keras.models import model_from_json
-model = model_from_json(open("model.json", "r").read())
-model.load_weights('model.h5')
 from PIL import Image as im
 import numpy as np
 from numpy import asarray
 
+# load saved model
+from tensorflow.keras.models import model_from_json
+model = model_from_json(open("model.json", "r").read())
+model.load_weights('model.h5')
+
 # load Haar-cascade used to detect position of face
 import cv2
 face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+# stream webcam video
+camera = cv2.VideoCapture(0)
+def gen_frames():  
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  
 
 # given image as array of rgba values of each pixel, return predicted emotion
 # in detected face and confidence of prediction
