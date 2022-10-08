@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>How Are You Really?</title>
+	<script src="static/lib/jquery-3.6.0.min.js"></script>
+	<style>
+		#video {
+			width: 500px;
+			height: 375px;
+			background-color: #666;
+		}
+		#canvas {
+			display: hidden
+		}
+	</style>
+</head>
+
+<body>
+	<div id="camera">
+		<video autoplay="true" id="video"></video>
+		<button id="capture">Capture</button>
+	</div>
+
+	<canvas id="canvas">
+		<div class="output">
+			<img id="photo" alt="The screen capture will appear in this box.">
+		</div>
+	</canvas>
+
+	<script>
+		const video = document.getElementById("video");
+		const captureButton = document.getElementById("capture");
+		const canvas = document.getElementById("canvas");
+		const context = canvas.getContext("2d");
+		const photo = document.getElementById("photo");
+		const width = video.clientWidth;
+		const height = video.clientHeight;
+		canvas.setAttribute("width", width);
+		canvas.setAttribute("height", height);
+
+		// stream video from webcam
+		if (navigator.mediaDevices.getUserMedia) {
+			navigator.mediaDevices.getUserMedia({ video: true })
+			.then(function (stream) {
+					video.srcObject = stream;
+			})
+			.catch(function (err) {
+					console.log(err.name + ": " + err.message);
+			});
+		}
+
+		// when capture button clicked, capture frame and send request to /analyze
+		captureButton.addEventListener("click", function (e) {
+			// capture frame
+			capture();
+			// send request to /analyze
+			const dataURL = canvas.toDataURL();
+			$.ajax({
+				url: "/analyze",
+				type: "POST",
+				data: {
+					imageBase64: dataURL
+				},
+				success: function (result) {
+					console.log(result);
+				}
+			});
+			e.preventDefault();
+		}, false);
+
+		clearPhoto();
+
+		// create image then convert it into format usable by <img>
+		function clearPhoto() {
+			context.fillStyle = "#666";
+			context.fillRect(0, 0, canvas.width, canvas.height);
+
+			const data = canvas.toDataURL("image/png");
+			photo.setAttribute("src", data);
+		}
+
+		// capture frame from stream
+		function capture() {
+			if (width && height) {
+				canvas.width = width;
+				canvas.height = height;
+				context.drawImage(video, 0, 0, width, height);
+
+				const data = canvas.toDataURL("image/png");
+				photo.setAttribute("src", data);
+			} else {
+				clearPhoto();
+			}
+		}
+	</script>
+</body>
+</html>
