@@ -1,3 +1,6 @@
 .DS_Store
 venv
 website_demo/node_modules
+fer2013.csv
+**/__pycache__
+.vscode
