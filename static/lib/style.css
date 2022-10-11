@@ -19,7 +19,6 @@
 
 }
 
-
 img {
     width: 100%;
     height: auto;
@@ -37,9 +36,6 @@ body {
     margin-left: 0;
     width: 100vw;
 }
-
-
-
 
 .sidebar {
     width: 345px;
@@ -272,22 +268,25 @@ header {
     font-weight: 600;
     color: var(--main-text);
 }
+
 .analytic-info h1 small{
     font-size: .8rem;
     font-weight: 700;
     letter-spacing: 1px;
 }
+
 .text-danger{
     color: red;
 }
 
-.text-main
-{
+.text-main{
     color: var(--color-main);
 }
+
 .text-success{
     color: #2ec3a3;
 }
+
 .text-yellow{
     color: #ebf75f;
 }
@@ -296,14 +295,17 @@ header {
     background-color: #dce5ff;
     color: var(--color-main);
 }
+
 .analytic:nth-child(2) .analytic-icon{
     background-color: #ebf75f;
     color: var(--color-main);
 }
+
 .analytic:nth-child(3) .analytic-icon{
     background-color: #53f144;
     color: var(--color-main);
 }
+
 .analytic:nth-child(4) .analytic-icon{
     background-color: #e0302a;
     color: var(--color-main);
@@ -317,7 +319,6 @@ header {
     place-items: center;
     margin-right: .7rem;
 }
-
 
 .section-head{
     font-size: 1.4rem;
@@ -357,13 +358,16 @@ header {
     color: var(--main-text);
     letter-spacing: 1px;
 }
+
 .rev-info h4{
     color: var(--color-main);
 }
+
 .rev-info h1 small{
     font-size: 1rem;
     font-weight: 500;
 }
+
 .rev-sum{
     background-color: var(--main-accent);
     border:1px solid var(--color-main);
@@ -375,6 +379,7 @@ header {
     font-weight: 600;
     color: var(--color-main);
 }
+
 .rev-sum h1{
     color: #2ec3a3;
 }
@@ -386,16 +391,19 @@ header {
     background-color: #fff;
 
 }
+
 .graph-head{
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .icon-wrapper{
     display: flex;
     align-items: center;
     gap: .8rem;
 }
+
 .icon-wrapper i{
     font-size: 1.2rem;
     height: 40px;
@@ -417,8 +425,6 @@ header {
 .fa-times{
     display: none;
 }
-
-
 
 @media only screen and (max-width:20000px){
     .sidebar{
@@ -473,6 +479,7 @@ header {
         padding: .5rem;
     }
 }
+
 @media only screen and (max-width:640px){
     .sidebar{
         width: 300px;
@@ -480,35 +487,35 @@ header {
     .rev-content{
         display: block;
         text-align: center;
-
     }
 }
+
 @media only screen and (max-width:480px){
     #revenueChart{
         min-height: 250px;
     }
-  .sidebar{
-      width: 250px;
-  }
-  .sidebar-avatar{
-      grid-template-columns: repeat(1,1fr);
-  }
-  .analytics{
-    grid-template-columns: repeat(1, 4fr);
-}
-.header-info h1{
-    font-size: 20px;
-}
-.header-title label{
-    margin-right: .5rem;
-}
-.icon-wrapper i{
-    font-size: 1rem;
-    width: 30px;
-    height: 30px;
-}
-.analytic{
-    justify-content: start;
-    padding-left: 20%;
-}
+    .sidebar{
+        width: 250px;
+    }
+    .sidebar-avatar{
+        grid-template-columns: repeat(1,1fr);
+    }
+    .analytics{
+        grid-template-columns: repeat(1, 4fr);
+    }
+    .header-info h1{
+        font-size: 20px;
+    }
+    .header-title label{
+        margin-right: .5rem;
+    }
+    .icon-wrapper i{
+        font-size: 1rem;
+        width: 30px;
+        height: 30px;
+    }
+    .analytic{
+        justify-content: start;
+        padding-left: 20%;
+    }
 }
