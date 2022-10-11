@@ -1,9 +1,3 @@
-<!--
-TODO:
-
- -->
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,14 +8,10 @@ TODO:
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
     <link rel="stylesheet" href="static/lib/style.css">
+    <link rel="stylesheet" href="./style.css">
     <title>How Are You Really</title>
 </head>
 <body>
-
-	<h1>Video</h1>
-	<div id="video">
-		<img src="{{ url_for('video_feed') }}" width="15%">
-	</div>
     <div class="sidebar">
         <div class="sidebar-container">
          <div class="brand">
@@ -35,12 +25,12 @@ TODO:
 
          <div class="sidebar-avatar">
              <div>
-                 <img  src="youtubelogo.jpg" alt="alt">
+                 <!-- <img  src="youtubelogo.jpg" alt="alt"> -->
              </div>
              <div class="avatar-info">
                  <div class="avatar-text">
                      <h4>HAYR</h4>
-                     <small>88-234-34-34</small>
+                     <small></small>
                  </div>
 
                 <i class="fa-solid fa-angle-double-down"></i>
@@ -72,9 +62,9 @@ TODO:
                 </ul>
          </div>
 
-         <div class="sidebar-card">
+         <!-- <div class="sidebar-card">
 
-             <div class="side-card-item" >
+              <div class="side-card-item" >
                  <h4>Make Adsense</h4>
                  <p>Add ads to your videos to earn money</p>
              </div>
@@ -82,7 +72,7 @@ TODO:
                   Create Now
               </button>
 
-         </div>
+         </div> -->
 
         </div>
     </div>
@@ -97,7 +87,7 @@ TODO:
                 </label>
                 <div class="header-info">
                     <h1>Analytics</h1>
-                    <p>Display analytics about your Channel
+                    <p>Based on video analytic providing feed back
                         <i class="fas fa-chart-line"></i></p>
                 </div>
 
@@ -120,9 +110,9 @@ TODO:
                         <div class="analytic-icon">
                             <i class="fas fa-eye"></i>
                         </div>
-                        <div class="analytic-info">
-                            <h4>Total views</h4>
-                            <h1>8.7M</h1>
+                         <div class="analytic-info">
+                            <h4>Number of Visits</h4>
+                            <h1>4</h1>
                         </div>
                     </div>
                     <div class="analytic">
@@ -130,8 +120,8 @@ TODO:
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="analytic-info">
-                            <h4>Watch Time (hrs)</h4>
-                            <h1>17.4K <small class="text-danger"> 5%</small></h1>
+                            <h4>Time in Session</h4>
+                            <h1>5<small>hrs</small></h1>
                         </div>
                     </div>
                     <div class="analytic">
@@ -139,8 +129,8 @@ TODO:
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="analytic-info">
-                            <h4>Subscribes</h4>
-                            <h1>2.2K <small class="text-success"> 25%</small></h1>
+                            <h4>Back Ground</h4>
+                            <h1>Fire Fighter</h1>
                         </div>
                     </div>
                     <div class="analytic">
@@ -148,8 +138,8 @@ TODO:
                             <i class="fas fa-heart"></i>
                         </div>
                         <div class="analytic-info">
-                            <h4>Total Likes</h4>
-                            <h1>993.4K </h1>
+                            <h4>Mental Health Rating</h4>
+                            <h1>93%</h1>
                         </div>
                     </div>
                 </div>
@@ -159,16 +149,17 @@ TODO:
                 <div class="block-grid">
                     <div class="revenue-card">
 
-                     <h3 class="section-head">Total revenue</h3>
+                     <h3 class="section-head">Patient Info</h3>
                         <div class="rev-content">
                             <img src="./youtubelogo.jpg" alt="">
                         <div class="rev-info">
-                            <h4>HAYR</h4>
-                            <h1>1.2M <small>Subscribes</small></h1>
+                            <h4>Name: John Smith</h4>
+                            <h4>Occupation: Fire Fighter</h4>
+                            <!-- <h1><small>Subscribes</small></h1> -->
                         </div>
                         <div class="rev-sum">
-                            <h4>Total income</h4>
-                            <h1>$40,789</h1>
+                            <h1>Insurance:</h1>
+                            <h1>Malia Health Care</h1>
                         </div>
 
                         </div>
@@ -203,6 +194,16 @@ TODO:
                     </div>
                 </div>
             </section>
+            <h1>Video</h1>
+                <style>
+                    .video {
+                        width: 20%;
+                        height: 20%;
+                    }
+                </style>
+	        <div id="video">
+		    <img src="{{ url_for('video_feed') }}" width="15%">
+	        </div>
 
         </main>
 
@@ -222,19 +223,19 @@ TODO:
                 labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
                 datasets: [
                     {
-                        label:"Views",
+                        label:"Mental Health Rating",
                         borderColor: 'blue',
                         borderWith: "3",
                         backgroundColor: 'rgba(235,247,245,0.5)',
-                        data: [0,150,50,90,70,100,190]
+                        data: [0,43,51,77,70,100,90]
                     },
-                    {
-                        label:"Watch time",
-                        borderColor: 'green',
-                        borderWith: "3",
-                        backgroundColor: 'rgba(233,238,253,0.5)',
-                        data: [0,120,40,30,140,170,130]
-                    }
+                    // {
+                    //     label:"Watch time",
+                    //     borderColor: 'green',
+                    //     borderWith: "3",
+                    //     backgroundColor: 'rgba(233,238,253,0.5)',
+                    //     data: [0,120,40,30,140,170,130]
+                    // }
 
                 ]
             },
