@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
-
-    <head>
-        <script src="static/lib/jquery-3.6.0.min.js"></script>
+<html lang="en"><head>
+        <script src="../static/lib/jquery-3.6.0.min.js"></script>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-        <link rel="stylesheet" href="static/lib/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="../static/lib/style.css">
         <link rel="stylesheet" href="./style.css">
         <title>How Are You Really</title>
     </head>
 
-    <body>
+    <body data-new-gr-c-s-check-loaded="14.1083.0" data-gr-ext-installed="">
         <div class="sidebar">
             <div class="sidebar-container">
                 <div class="brand">
@@ -124,6 +122,8 @@
                     </div>
                 </section>
 
+                
+                
                 <section>
                     <div class="block-grid">
                         <div class="revenue-card">
@@ -138,9 +138,10 @@
                                     <h1>Insurance:</h1>
                                     <h1>Malia Health Care</h1>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="graph-card">
+                            </div><div id="video" class="revenue-card">
+                    <h3 class="section-head">Video</h3><img src="/video_feed" width="15%">
+                </div>
+                        </div><div class="graph-card">
                             <h3 class="section-head">Graph</h3>
                             <div class="graph-content">
                                 <div class="graph-head">
@@ -158,24 +159,21 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="graph-body">
-                                    <canvas id="revenueChart" width="100%">
+                                <div class="graph-body"><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; inset: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
+                                    <canvas id="revenueChart" width="1944" height="952" style="display: block; height: 476px; width: 972px;">
                                     </canvas>
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
-                </section>
-                <h1>Video</h1>
-                <style>
+                </section><style>
                     .video {
                         width: 20%;
                         height: 20%;
                     }
                 </style>
-                <div id="video">
-                    <img src="{{ url_for('video_feed') }}" width="15%">
-                </div>
+                
             </main>
         </div>
 
@@ -225,5 +223,5 @@
                 main.classList.remove('active')
             })
         </script>
-    </body>
-</html>
+    
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration></html>
