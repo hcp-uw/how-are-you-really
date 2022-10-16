@@ -182,32 +182,62 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
         <script>
+            // TODO: colored arbitrarily; update
+            const emotionColors = {
+                "happy": "green",
+                "neutral": "blue",
+                "surprise": "blue",
+                "angry": "red",
+                "disgust": "red",
+                "fear": "red",
+                "sad": "red"
+            };
+
             let ctx = document.querySelector('#revenueChart')
-            ctx.height = 49;
-            let revChart = new Chart(ctx, {
+            ctx.height = 500;
+            // TODO: call API every second
+            $.ajax({
+				url: "/data",
+				type: "GET",
+				success: function (data) {
+                    let labels = data.map((entry) => entry.timestamp);
+                    let confidence = data.map((entry) => entry.confidence);
+                    let emotion = data.map((entry) => entry.emotion);
+                    let colors = emotion.map((entry) => emotionColors[entry]);
 
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [
-                        {
-                            label: "Mental Health Rating",
-                            borderColor: 'blue',
-                            borderWith: "3",
-                            backgroundColor: 'rgba(235,247,245,0.5)',
-                            data: [0, 43, 51, 77, 70, 100, 90]
+                    let revChart = new Chart(ctx, {
+                        type: 'line',
+                        // display timestamp as labels, emotion as color, confidence as data
+                        // TODO: temporary; update to something more intuitive and meaningful
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    pointBorderColor: colors,
+                                    borderWidth: 3,
+                                    data: confidence
+                                }
+                            ]
                         },
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    tooltips: {
-                        mode: 'index',
-                        intersect: false
-
-                    }
-                }
-            });
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            tooltips: {
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: function(e) {
+                                        return [
+                                            "Emotion: " + emotion[e.index],
+                                            "Confidence: " + confidence[e.index]
+                                        ];
+                                    }
+                                }
+                            }
+                        }
+                    });
+				}
+			});
         </script>
 
         <script>

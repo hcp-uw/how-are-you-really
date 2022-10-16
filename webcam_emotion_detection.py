@@ -10,6 +10,17 @@ model.load_weights('model/model.h5')
 import cv2
 face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
+# "database" storing timestamp, emotion, and confidence
+database = [
+    {"timestamp": "0", "emotion": "happy", "confidence": 10.5},
+    {"timestamp": "10", "emotion": "neutral", "confidence": 80.2},
+    {"timestamp": "20", "emotion": "happy", "confidence": 12},
+    {"timestamp": "30", "emotion": "sad", "confidence": 50},
+    {"timestamp": "40", "emotion": "sad", "confidence": 40.5},
+    {"timestamp": "50", "emotion": "happy", "confidence": 70},
+    {"timestamp": "60", "emotion": "happy", "confidence": 99.9}
+]
+
 # predict emotion in detected face in stream webcam video
 camera = cv2.VideoCapture(0)
 def gen_frames():
@@ -40,6 +51,13 @@ def gen_frames():
                     emotion_detection = ('angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral')
                     emotion_prediction = emotion_detection[max_index]
                     confidence = str(np.max(predictions[0]))
+                    # TODO: save data to "database"
+                    # database.append({
+                    #     "timestamp": 0, # TODO
+                    #     "emotion": emotion_prediction,
+                    #     "confidence": confidence
+                    # })
+                    # TODO: remove?
                     print("The patient is {} with confidence {}".format(emotion_prediction, confidence))
             except:
                 pass
@@ -49,3 +67,7 @@ def gen_frames():
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+# TODO: enable to configure number of data points and their interval to return
+def data():
+    return database[-7:]
