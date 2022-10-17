@@ -1,6 +1,6 @@
 import numpy as np
 from numpy import asarray
-import math, time
+import math, time, random
 
 # load saved model
 from tensorflow.keras.models import model_from_json
@@ -12,14 +12,15 @@ import cv2
 face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 # "database" storing timestamp, emotion, and confidence
+# TODO: should be initially empty
 database = [
-    {"timestamp": "0", "emotion": "happy", "confidence": 10.5},
-    {"timestamp": "10", "emotion": "neutral", "confidence": 80.2},
-    {"timestamp": "20", "emotion": "happy", "confidence": 12},
-    {"timestamp": "30", "emotion": "sad", "confidence": 50},
-    {"timestamp": "40", "emotion": "sad", "confidence": 40.5},
-    {"timestamp": "50", "emotion": "happy", "confidence": 70},
-    {"timestamp": "60", "emotion": "happy", "confidence": 99.9}
+    {"timestamp": "0", "emotion": "happy", "confidence": 0.105},
+    {"timestamp": "10", "emotion": "neutral", "confidence": 0.802},
+    {"timestamp": "20", "emotion": "happy", "confidence": 0.12},
+    {"timestamp": "30", "emotion": "sad", "confidence": 0.5},
+    {"timestamp": "40", "emotion": "sad", "confidence": 0.405},
+    {"timestamp": "50", "emotion": "happy", "confidence": 0.701},
+    {"timestamp": "60", "emotion": "happy", "confidence": 0.99}
 ]
 
 # predict emotion in detected face in stream webcam video
@@ -57,13 +58,14 @@ def gen_frames():
                     emotion_prediction = emotion_detection[max_index]
                     confidence = str(np.max(predictions[0]))
                     # save data to "database" every second
-                    # TODO: doesn't seem like it's working (records every 2-4 seconds instead of 1)
+                    # TODO: doesn't work; remove logic for 1 fps;
+                    # instead, record every frame and add api for computing average
                     if current_frame % (math.floor(frame_rate / frame_per_second)) == 0:
-                        # database.append({
-                        #     "timestamp": time.time(),
-                        #     "emotion": emotion_prediction,
-                        #     "confidence": confidence
-                        # })
+                        database.append({
+                            "timestamp": time.time(),
+                            "emotion": emotion_prediction,
+                            "confidence": confidence
+                        })
                         print("timestamp: {}, emotion: {}, confidence: {}".format(
                             time.time(),
                             emotion_prediction,

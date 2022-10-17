@@ -192,14 +192,15 @@
                 "fear": "red",
                 "sad": "red"
             };
+            // TODO: should be initially empty
             const dataPoints = [
-                {"timestamp": "0", "emotion": "happy", "confidence": 10.5},
-                {"timestamp": "10", "emotion": "neutral", "confidence": 80.2},
-                {"timestamp": "20", "emotion": "happy", "confidence": 12},
-                {"timestamp": "30", "emotion": "sad", "confidence": 50},
-                {"timestamp": "40", "emotion": "sad", "confidence": 40.5},
-                {"timestamp": "50", "emotion": "happy", "confidence": 70},
-                {"timestamp": "60", "emotion": "happy", "confidence": 99.9}
+                {"timestamp": "0", "emotion": "happy", "confidence": 0.105},
+                {"timestamp": "10", "emotion": "neutral", "confidence": 0.802},
+                {"timestamp": "20", "emotion": "happy", "confidence": 0.12},
+                {"timestamp": "30", "emotion": "sad", "confidence": 0.5},
+                {"timestamp": "40", "emotion": "sad", "confidence": 0.405},
+                {"timestamp": "50", "emotion": "happy", "confidence": 0.701},
+                {"timestamp": "60", "emotion": "happy", "confidence": 0.99}
             ];
             const emotions = dataPoints.map((entry) => entry.emotion);
             const confidences = dataPoints.map((entry) => entry.confidence);
@@ -209,6 +210,11 @@
 
             const chart = drawChart(dataPoints, ctx);
             setInterval(updateChart, 3000, chart);
+
+            function formatTime(time) {
+                const date = new Date(time);
+                return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+            }
 
             function updateChart(chart) {
                 $.ajax({
@@ -223,7 +229,7 @@
 
                         // remove first data point from chart
                         chart.data.labels.shift();
-                        chart.data.labels.push(data.timestamp);
+                        chart.data.labels.push(formatTime(data.timestamp));
 
                         // add new data point to chart
                         chart.data.datasets.forEach((dataset) => {
