@@ -120,15 +120,15 @@ zipp==3.8.1
 tensorflow==2.10.0
 
 # Conda use below
-# six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
-# numpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1660673193545/work
-# grpcio @ file:///Users/runner/miniforge3/conda-bld/grpcio_1653138968159/work
-# h5py @ file:///Users/runner/miniforge3/conda-bld/h5py_1637964553571/work
-# cached-property @ file:///home/conda/feedstock_root/build_artifacts/cached_property_1615209429212/work
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
+numpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1660673193545/work
+grpcio @ file:///Users/runner/miniforge3/conda-bld/grpcio_1653138968159/work
+h5py @ file:///Users/runner/miniforge3/conda-bld/h5py_1637964553571/work
+cached-property @ file:///home/conda/feedstock_root/build_artifacts/cached_property_1615209429212/work
 
 # Other configs use below
-numpy
-six
-h5py
-grpcio
-cached-property
+# numpy
+# six
+# h5py
+# grpcio
+# cached-property
