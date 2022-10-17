@@ -154,7 +154,7 @@
                                     </div>
                                     <div class="graph-select">
                                         <select name="" id="">
-                                            <option value="">Last 7 days</option>
+                                            <option value="">Last 1 minute</option>
                                         </select>
                                     </div>
                                 </div>
@@ -192,52 +192,90 @@
                 "fear": "red",
                 "sad": "red"
             };
+            const dataPoints = [
+                {"timestamp": "0", "emotion": "happy", "confidence": 10.5},
+                {"timestamp": "10", "emotion": "neutral", "confidence": 80.2},
+                {"timestamp": "20", "emotion": "happy", "confidence": 12},
+                {"timestamp": "30", "emotion": "sad", "confidence": 50},
+                {"timestamp": "40", "emotion": "sad", "confidence": 40.5},
+                {"timestamp": "50", "emotion": "happy", "confidence": 70},
+                {"timestamp": "60", "emotion": "happy", "confidence": 99.9}
+            ];
+            const emotions = dataPoints.map((entry) => entry.emotion);
+            const confidences = dataPoints.map((entry) => entry.confidence);
 
             let ctx = document.querySelector('#revenueChart')
             ctx.height = 500;
-            // TODO: call API every second
-            $.ajax({
-				url: "/data",
-				type: "GET",
-				success: function (data) {
-                    let labels = data.map((entry) => entry.timestamp);
-                    let confidence = data.map((entry) => entry.confidence);
-                    let emotion = data.map((entry) => entry.emotion);
-                    let colors = emotion.map((entry) => emotionColors[entry]);
 
-                    let revChart = new Chart(ctx, {
-                        type: 'line',
-                        // display timestamp as labels, emotion as color, confidence as data
-                        // TODO: temporary; update to something more intuitive and meaningful
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    pointBorderColor: colors,
-                                    borderWidth: 3,
-                                    data: confidence
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            tooltips: {
-                                mode: 'index',
-                                intersect: false,
-                                callbacks: {
-                                    label: function(e) {
-                                        return [
-                                            "Emotion: " + emotion[e.index],
-                                            "Confidence: " + confidence[e.index]
-                                        ];
-                                    }
+            const chart = drawChart(dataPoints, ctx);
+            setInterval(updateChart, 3000, chart);
+
+            function updateChart(chart) {
+                $.ajax({
+                    url: "/data",
+                    type: "GET",
+                    success: function (data) {
+                        // update emotions and confidences
+                        emotions.shift();
+                        confidences.shift();
+                        emotions.push(data.emotion);
+                        confidences.push(data.confidence);
+
+                        // remove first data point from chart
+                        chart.data.labels.shift();
+                        chart.data.labels.push(data.timestamp);
+
+                        // add new data point to chart
+                        chart.data.datasets.forEach((dataset) => {
+                            dataset.data.shift();
+                            dataset.data.push(data.confidence);
+                            dataset.pointBorderColor.shift();
+                            dataset.pointBorderColor.push(emotionColors[data.emotion]);
+                        });
+
+                        chart.update();
+                    }
+                });
+            }
+
+            function drawChart(dataPoints, ctx) {
+                let labels = dataPoints.map((entry) => entry.timestamp);
+                let colors = emotions.map((entry) => emotionColors[entry]);
+
+                let revChart = new Chart(ctx, {
+                    type: 'line',
+                    // display timestamp as labels, emotion as color, confidence as data
+                    // TODO: temporary; update to something more intuitive and meaningful
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                pointBorderColor: colors,
+                                borderWidth: 3,
+                                data: confidences
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(e) {
+                                    return [
+                                        "Emotion: " + emotions[e.index],
+                                        "Confidence: " + confidences[e.index]
+                                    ];
                                 }
                             }
                         }
-                    });
-				}
-			});
+                    }
+                });
+
+                return revChart;
+            }
         </script>
 
         <script>

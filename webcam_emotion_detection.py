@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import asarray
+import math, time
 
 # load saved model
 from tensorflow.keras.models import model_from_json
@@ -24,6 +25,10 @@ database = [
 # predict emotion in detected face in stream webcam video
 camera = cv2.VideoCapture(0)
 def gen_frames():
+    frame_rate = camera.get(cv2.CAP_PROP_FPS)
+    frame_per_second = 1 # 1 fps; should be <= frame_rate
+
+    current_frame = 0
     while True:
         success, frame = camera.read()
         if not success:
@@ -51,14 +56,20 @@ def gen_frames():
                     emotion_detection = ('angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral')
                     emotion_prediction = emotion_detection[max_index]
                     confidence = str(np.max(predictions[0]))
-                    # TODO: save data to "database"
-                    # database.append({
-                    #     "timestamp": 0, # TODO
-                    #     "emotion": emotion_prediction,
-                    #     "confidence": confidence
-                    # })
-                    # TODO: remove?
-                    print("The patient is {} with confidence {}".format(emotion_prediction, confidence))
+                    # save data to "database" every second
+                    # TODO: doesn't seem like it's working (records every 2-4 seconds instead of 1)
+                    if current_frame % (math.floor(frame_rate / frame_per_second)) == 0:
+                        # database.append({
+                        #     "timestamp": time.time(),
+                        #     "emotion": emotion_prediction,
+                        #     "confidence": confidence
+                        # })
+                        print("timestamp: {}, emotion: {}, confidence: {}".format(
+                            time.time(),
+                            emotion_prediction,
+                            confidence)
+                        )
+                current_frame += 1
             except:
                 pass
 
@@ -68,6 +79,7 @@ def gen_frames():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-# TODO: enable to configure number of data points and their interval to return
+# return the last entry in "database"
+# TODO: configure number of data points and interval to return
 def data():
-    return database[-7:]
+    return database[-1]
