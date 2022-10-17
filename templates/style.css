@@ -23,6 +23,7 @@
 img {
     width: 100%;
     height: auto;
+    border-radius: 10pt;
 }
 
 body {
@@ -247,7 +248,7 @@ header {
     padding: .8rem 2rem;
 }
 .analytics{
-    display: grid;
+    display: inline-flex;
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
 }
