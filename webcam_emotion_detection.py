@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import asarray
+import time
 
 # load saved model
 from tensorflow.keras.models import model_from_json
@@ -9,6 +10,9 @@ model.load_weights('model/model.h5')
 # load Haar-cascade used to detect position of face
 import cv2
 face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+# "database" storing timestamp, emotion, and confidence
+database = []
 
 # predict emotion in detected face in stream webcam video
 camera = cv2.VideoCapture(0)
@@ -40,12 +44,27 @@ def gen_frames():
                     emotion_detection = ('angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral')
                     emotion_prediction = emotion_detection[max_index]
                     confidence = str(np.max(predictions[0]))
-                    print("The patient is {} with confidence {}".format(emotion_prediction, confidence))
+                    # save data to "database" every second
+                    database.append({
+                        "timestamp": time.time(),
+                        "emotion": emotion_prediction,
+                        "confidence": confidence
+                    })
+                    print("timestamp: {}, emotion: {}, confidence: {}".format(
+                        time.time(),
+                        emotion_prediction,
+                        confidence
+                    ))
             except:
                 pass
 
             # return frames
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
+            ret, buf = cv2.imencode('.jpg', frame)
+            frame = buf.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+# return the last entry in "database"
+# TODO: configure number of data points and interval to return
+def data():
+    return database[-1:]
