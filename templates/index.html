@@ -154,7 +154,7 @@
                                     </div>
                                     <div class="graph-select">
                                         <select name="" id="">
-                                            <option value="">Last 1 minute</option>
+                                            <option value="">Last 5 minutes</option>
                                         </select>
                                     </div>
                                 </div>
@@ -192,71 +192,77 @@
                 "fear": "red",
                 "sad": "red"
             };
-            // TODO: should be initially empty
-            const dataPoints = [
-                {"timestamp": "0", "emotion": "happy", "confidence": 0.105},
-                {"timestamp": "10", "emotion": "neutral", "confidence": 0.802},
-                {"timestamp": "20", "emotion": "happy", "confidence": 0.12},
-                {"timestamp": "30", "emotion": "sad", "confidence": 0.5},
-                {"timestamp": "40", "emotion": "sad", "confidence": 0.405},
-                {"timestamp": "50", "emotion": "happy", "confidence": 0.701},
-                {"timestamp": "60", "emotion": "happy", "confidence": 0.99}
-            ];
-            const emotions = dataPoints.map((entry) => entry.emotion);
-            const confidences = dataPoints.map((entry) => entry.confidence);
+            const emotions = [];
+            const confidences = [];
+            const maxData = 100;
+            let numData = 0;
 
             let ctx = document.querySelector('#revenueChart')
             ctx.height = 500;
 
-            const chart = drawChart(dataPoints, ctx);
+            const chart = drawChart(ctx);
             setInterval(updateChart, 3000, chart);
 
+            // given epoch time, convert and return hours:minutes:seconds
             function formatTime(time) {
-                const date = new Date(time);
+                const date = new Date(1000 * time);
                 return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
             }
 
+            // request last data from server and update chart with it
             function updateChart(chart) {
                 $.ajax({
                     url: "/data",
                     type: "GET",
                     success: function (data) {
+                        data = data[0];
+                        console.log(data);
+
+                        // if no data (eg. database is empty), pass
+                        if (!data) {
+                            return;
+                        }
+
+                        // if reached max data points, remove first data point
+                        if (numData >= maxData) {
+                            emotions.shift();
+                            confidences.shift();
+                            chart.data.labels.shift();
+                        }
+
                         // update emotions and confidences
-                        emotions.shift();
-                        confidences.shift();
                         emotions.push(data.emotion);
                         confidences.push(data.confidence);
 
-                        // remove first data point from chart
-                        chart.data.labels.shift();
-                        chart.data.labels.push(formatTime(data.timestamp));
-
+                        // if reached max data points, remove first data point from chart
                         // add new data point to chart
+                        chart.data.labels.push(formatTime(data.timestamp));
                         chart.data.datasets.forEach((dataset) => {
-                            dataset.data.shift();
+                            if (numData >= maxData) {
+                                dataset.data.shift();
+                                dataset.pointBorderColor.shift();
+                            }
                             dataset.data.push(data.confidence);
-                            dataset.pointBorderColor.shift();
                             dataset.pointBorderColor.push(emotionColors[data.emotion]);
                         });
 
                         chart.update();
+                        numData++;
                     }
                 });
             }
 
-            function drawChart(dataPoints, ctx) {
-                let labels = dataPoints.map((entry) => entry.timestamp);
-                let colors = emotions.map((entry) => emotionColors[entry]);
-
+            // draw initial chart
+            function drawChart(ctx) {
                 let revChart = new Chart(ctx, {
                     type: 'line',
                     // display timestamp as labels, emotion as color, confidence as data
                     // TODO: temporary; update to something more intuitive and meaningful
                     data: {
-                        labels: labels,
+                        labels: [],
                         datasets: [
                             {
-                                pointBorderColor: colors,
+                                pointBorderColor: [],
                                 borderWidth: 3,
                                 data: confidences
                             }
