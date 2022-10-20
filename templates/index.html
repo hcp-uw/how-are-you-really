@@ -232,13 +232,14 @@
                         let emotion = data.emotion;
                         let confidence = data.confidence;
                         // add p tags into rev-info
-
+                        let date = data.timestamp;
+                        $('#log_section').append('<p> ' + formatTime(date) + " - patient is " + emotion + ", with confidence " + confidence + '<p>');
+                            
                         // if no data (eg. database is empty), pass
                         if (!data) {
                             return;
                         }
-                        let date = data.timestamp;
-                        $('#log_section').append('<p> ' + formatTime(date) + " - patient is " + emotion + ", with confidence " + confidence + '<p>');
+
                         // if reached max data points, remove first data point
                         if (numData >= maxData) {
                             emotions.shift();
