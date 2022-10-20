@@ -1,6 +1,6 @@
 import numpy as np
 from numpy import asarray
-import math, time
+import time
 
 # load saved model
 from tensorflow.keras.models import model_from_json
@@ -14,14 +14,15 @@ face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 sessions = {}
 session_id = 0
 analysis_per_session = []
+# "database" storing timestamp, emotion, and confidence
+database = []
+
 # predict emotion in detected face in stream webcam video
 current_frame = 0
 i = 0
 
 camera = cv2.VideoCapture(0)
 def gen_frames():
-    frame_rate = camera.get(cv2.CAP_PROP_FPS)
-    frame_per_second = 1 # 1 fps; should be <= frame_rate
     global current_frame
     global session_id
     global i
@@ -144,11 +145,27 @@ def gen_frames():
                         # TODO: compare with prev average
                         session_id +=1
                 
+                    # save data to "database" every second
+                    database.append({
+                        "timestamp": time.time(),
+                        "emotion": emotion_prediction,
+                        "confidence": confidence
+                    })
+                    print("timestamp: {}, emotion: {}, confidence: {}".format(
+                        time.time(),
+                        emotion_prediction,
+                        confidence
+                    ))
             except:
                 pass
 
             # return frames
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
+            ret, buf = cv2.imencode('.jpg', frame)
+            frame = buf.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+# return the last entry in "database"
+# TODO: configure number of data points and interval to return
+def data():
+    return database[-1:]

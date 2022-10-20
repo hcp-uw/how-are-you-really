@@ -167,7 +167,7 @@
                                     </div>
                                     <div class="graph-select">
                                         <select name="" id="">
-                                            <option value="">Last 7 days</option>
+                                            <option value="">Last 5 minutes</option>
                                         </select>
                                     </div>
                                 </div>
@@ -192,32 +192,112 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
         <script>
+            // TODO: colored arbitrarily; update
+            const emotionColors = {
+                "happy": "green",
+                "neutral": "blue",
+                "surprise": "blue",
+                "angry": "red",
+                "disgust": "red",
+                "fear": "red",
+                "sad": "red"
+            };
+            const emotions = [];
+            const confidences = [];
+            const maxData = 100;
+            let numData = 0;
+
             let ctx = document.querySelector('#revenueChart')
-            ctx.height = 49;
-            let revChart = new Chart(ctx, {
+            ctx.height = 500;
 
-                type: 'line',
-                data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: [
-                        {
-                            label: "Mental Health Rating",
-                            borderColor: 'blue',
-                            borderWith: "3",
-                            backgroundColor: 'rgba(235,247,245,0.5)',
-                            data: [0, 43, 51, 77, 70, 100, 90]
-                        },
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    tooltips: {
-                        mode: 'index',
-                        intersect: false
+            const chart = drawChart(ctx);
+            setInterval(updateChart, 3000, chart);
 
+            // given epoch time, convert and return hours:minutes:seconds
+            function formatTime(time) {
+                const date = new Date(1000 * time);
+                return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+            }
+
+            // request last data from server and update chart with it
+            function updateChart(chart) {
+                $.ajax({
+                    url: "/data",
+                    type: "GET",
+                    success: function (data) {
+                        data = data[0];
+                        console.log(data);
+
+                        // if no data (eg. database is empty), pass
+                        if (!data) {
+                            return;
+                        }
+
+                        // if reached max data points, remove first data point
+                        if (numData >= maxData) {
+                            emotions.shift();
+                            confidences.shift();
+                            chart.data.labels.shift();
+                        }
+
+                        // update emotions and confidences
+                        emotions.push(data.emotion);
+                        confidences.push(data.confidence);
+
+                        // if reached max data points, remove first data point from chart
+                        // add new data point to chart
+                        chart.data.labels.push(formatTime(data.timestamp));
+                        chart.data.datasets.forEach((dataset) => {
+                            if (numData >= maxData) {
+                                dataset.data.shift();
+                                dataset.pointBorderColor.shift();
+                            }
+                            dataset.data.push(data.confidence);
+                            dataset.pointBorderColor.push(emotionColors[data.emotion]);
+                        });
+
+                        chart.update();
+                        numData++;
                     }
-                }
-            });
+                });
+            }
+
+            // draw initial chart
+            function drawChart(ctx) {
+                let revChart = new Chart(ctx, {
+                    type: 'line',
+                    // display timestamp as labels, emotion as color, confidence as data
+                    // TODO: temporary; update to something more intuitive and meaningful
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                pointBorderColor: [],
+                                borderWidth: 3,
+                                data: confidences
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(e) {
+                                    return [
+                                        "Emotion: " + emotions[e.index],
+                                        "Confidence: " + confidences[e.index]
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                });
+
+                return revChart;
+            }
         </script>
 
         <script>
