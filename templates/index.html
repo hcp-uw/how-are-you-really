@@ -215,7 +215,7 @@
             let numData = 0;
 
             let ctx = document.querySelector('#revenueChart')
-            ctx.height = 500;
+            ctx.height = 700;
 
             const chart = drawChart(ctx);
             setInterval(updateChart, 3000, chart);
@@ -305,6 +305,55 @@
 
                 return revChart;
             }
+
+            function drawPolarArea(){
+                const ctx1 = document.getElementById("chart-1").getContext("2d");
+                const myChart = new Chart(ctx1, {
+                type: "polarArea",
+                data: {
+                    labels: ["Enthusiasm", "Alertness", "Distress"],
+                    datasets: [
+                    {
+                        label: "% of mental behavior",
+                        data: [75, 60, 35],
+                        backgroundColor: [
+                        "rgba(54, 162, 235, 1)",
+                        "rgba(255, 206, 86, 1)",
+                        "rgba(255, 99, 132, 1)",
+                        ],
+                    },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                },
+                });
+                return myChart
+            }
+            function drawBar() {
+                const ctx2 = document.getElementById("chart-2").getContext("2d");
+                const myChart2 = new Chart(ctx2, {
+                type: "bar",
+                data: {
+                    labels: ["Positive state", "Anxiety", "Stress"],
+                    datasets: [
+                    {
+                        label: "Intensity 0-100",
+                        data: [80, 25, 40],
+                        backgroundColor: [
+                        "rgba(54, 162, 235, 1)",
+                        "rgba(255, 99, 132, 1)",
+                        "rgba(255, 206, 86, 1)",
+                        ],
+                    },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                },
+                });
+                return myChart2;
+            }
         </script>
 
         <script>
@@ -323,54 +372,11 @@
             })
         </script>
         
-        <!-- Mental State Charts  -->
-        <script>
-            const ctx1 = document.getElementById("chart-1").getContext("2d");
-            const myChart = new Chart(ctx1, {
-            type: "polarArea",
-            data: {
-                labels: ["Enthusiasm", "Alertness", "Distress"],
-                datasets: [
-                {
-                    label: "% of mental behavior",
-                    data: [75, 60, 35],
-                    backgroundColor: [
-                    "rgba(54, 162, 235, 1)",
-                    "rgba(255, 206, 86, 1)",
-                    "rgba(255, 99, 132, 1)",
-                    ],
-                },
-                ],
-            },
-            options: {
-                responsive: true,
-            },
-            });
-
-            const ctx2 = document.getElementById("chart-2").getContext("2d");
-            const myChart2 = new Chart(ctx2, {
-            type: "bar",
-            data: {
-                labels: ["Positive state", "Anxiety", "Stress"],
-                datasets: [
-                {
-                    label: "Intensity 0-100",
-                    data: [80, 25, 40],
-                    backgroundColor: [
-                    "rgba(54, 162, 235, 1)",
-                    "rgba(255, 99, 132, 1)",
-                    "rgba(255, 206, 86, 1)",
-                    ],
-                },
-                ],
-            },
-            options: {
-                responsive: true,
-            },
-            });
-        </script>
+ 
         <script>
             function generateReport(){
+                drawBar();
+                drawPolarArea();
                 document.getElementById('revealTitle').style.display = "block";
                 document.getElementById('revealReport').style.display = "grid";
             }
