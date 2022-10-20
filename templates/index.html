@@ -179,6 +179,7 @@
                         </div>
                         
                     </div>
+                    <h3 class="section-head">Mental Stability</h3>
                     <div class="chartsBx">
                         <div class="chart"> <canvas id="chart-1"></canvas> </div>
                         <div class="chart"> <canvas id="chart-2"></canvas> </div>
@@ -326,11 +327,11 @@
             const myChart = new Chart(ctx1, {
             type: "polarArea",
             data: {
-                labels: ["Facebook", "Youtube", "Amazon"],
+                labels: ["Enthusiasm", "Alertness", "Distress"],
                 datasets: [
                 {
-                    label: "# of Votes",
-                    data: [600, 800, 1000],
+                    label: "% of mental behavior",
+                    data: [40, 25, 35],
                     backgroundColor: [
                     "rgba(54, 162, 235, 1)",
                     "rgba(255, 99, 132, 1)",
@@ -348,11 +349,11 @@
             const myChart2 = new Chart(ctx2, {
             type: "bar",
             data: {
-                labels: ["Facebook", "Youtube", "Amazon"],
+                labels: ["Positive state", "Anxiety", "Stress"],
                 datasets: [
                 {
-                    label: "Earning",
-                    data: [600, 800, 1000],
+                    label: "Intensity 0-100",
+                    data: [80, 25, 40],
                     backgroundColor: [
                     "rgba(54, 162, 235, 1)",
                     "rgba(255, 99, 132, 1)",
