@@ -437,6 +437,25 @@ header {
     display: none;
 }
 
+.chartsBx{
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 30px;
+  }  
+
+.chartsBx .chart {
+    position: relative;
+    background: #fff;
+    padding: 20px;
+    width: 100%;
+    box-shadow: 0 7px 25px rgb(0 0 0 / 8%);
+    border-radius: 20px;
+    border: 1px solid var(--blue);
+}
+
 @media only screen and (max-width:20000px){
     .sidebar{
         left: -345px;
@@ -488,6 +507,10 @@ header {
     }
     .main-content{
         padding: .5rem;
+    }
+    .chartsBx{
+        grid-template-columns: 1fr;
+        height: auto;
     }
 }
 

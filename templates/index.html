@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <link rel="stylesheet" href="../static/lib/style.css">
         <link rel="stylesheet" href="./style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <title>How Are You Really</title>
     </head>
 
@@ -174,6 +175,12 @@
                         </div>
 
                     </div>
+                    <button onclick="generateReport()" type="button" class="btn btn-lg btn-block btn-outline-success" style="margin: 1em; width: 80%; margin-left: auto; margin-right: auto;">Generate Report</button>
+                    <h3 id="revealTitle" class="section-head" style="display:none;">Mental Stability</h3>
+                    <div id="revealReport" class="chartsBx" style="display:none;">
+                        <div class="chart"> <canvas id="chart-1"></canvas> </div>
+                        <div class="chart"> <canvas id="chart-2"></canvas> </div>
+                    </div>
                 </section><style>
                     .video {
                         width: 20%;
@@ -314,5 +321,57 @@
                 main.classList.remove('active')
             })
         </script>
+        
+        <!-- Mental State Charts  -->
+        <script>
+            const ctx1 = document.getElementById("chart-1").getContext("2d");
+            const myChart = new Chart(ctx1, {
+            type: "polarArea",
+            data: {
+                labels: ["Enthusiasm", "Alertness", "Distress"],
+                datasets: [
+                {
+                    label: "% of mental behavior",
+                    data: [75, 60, 35],
+                    backgroundColor: [
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(255, 99, 132, 1)",
+                    ],
+                },
+                ],
+            },
+            options: {
+                responsive: true,
+            },
+            });
 
+            const ctx2 = document.getElementById("chart-2").getContext("2d");
+            const myChart2 = new Chart(ctx2, {
+            type: "bar",
+            data: {
+                labels: ["Positive state", "Anxiety", "Stress"],
+                datasets: [
+                {
+                    label: "Intensity 0-100",
+                    data: [80, 25, 40],
+                    backgroundColor: [
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 99, 132, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    ],
+                },
+                ],
+            },
+            options: {
+                responsive: true,
+            },
+            });
+        </script>
+        <script>
+            function generateReport(){
+                document.getElementById('revealTitle').style.display = "block";
+                document.getElementById('revealReport').style.display = "grid";
+            }
+        </script>
 </body></html>
