@@ -224,7 +224,7 @@
                         console.log(data);
                         let emotion = data.emotion;
                         let confidence = data.confidence;
-                        $('#log_section').append('<p> At ' + formatTime(date) + ", the patient is " + emotion + ", with confidence " + confidence + '<p>');
+                        $('#log_section').append('<p> ' + formatTime(date) + " - patient is " + emotion + ", with confidence " + confidence + '<p>');
                         // add p tags into rev-info
 
                         // if no data (eg. database is empty), pass
