@@ -83,7 +83,7 @@
                     <h3 class="section-head">Medical Record</h3>
                     <div class="analytics">
                         <div class="analytic">
-                            
+
                             <div class="analytic-info">
                                 <h4>Patient</h4>
                                 <h1>John Smith</h1>
@@ -106,7 +106,7 @@
                                 <h1>5<small>hrs</small></h1>
                             </div>
                         </div>
-                        
+
                         <div class="analytic">
                             <div class="analytic-icon">
                                 <i class="fas fa-heart"></i>
@@ -125,7 +125,7 @@
                                 <h1>4</h1>
                             </div>
                         </div><div class="analytic">
-                            
+
                             <div class="analytic-info">
                                 <h4>Insurance</h4>
                                 <h1 style="color: #2ec3a3;">Malia Health Care</h1>
@@ -133,8 +133,8 @@
                         </div></div>
                 </section>
 
-                
-                
+
+
                 <section>
                     <div class="block-grid">
                         <div class="revenue-card">
@@ -145,12 +145,7 @@
                             <h3 class="section-head">Real Time Analysis</h3>
                             <div class="rev-content">
                                 <img src="./youtubelogo.jpg" alt="">
-                                <div class="rev-info">
-                                    <p>10:04:30 The patient is happy with confidence 74% </p>
-                                    <p>10:04:50 The patient is happy with confidence 96% </p>
-                                    <p>10:05:23 The patient is sad with confidence 30% </p>
-                                    <p>10:05:47 The patient is happy with confidence 55% </p>
-                                    <p>10:06:10 The patient is happy with confidence 88% </p>
+                                <div class="rev-info emotion_state" id="log_section">
                                 </div>
                             </div>
                         </div><div class="graph-card">
@@ -177,7 +172,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </section><style>
                     .video {
@@ -185,7 +180,7 @@
                         height: 20%;
                     }
                 </style>
-                
+
             </main>
         </div>
 
@@ -227,6 +222,11 @@
                     success: function (data) {
                         data = data[0];
                         console.log(data);
+                        let date = data.timestamp;
+                        let emotion = data.emotion;
+                        let confidence = data.confidence;
+                        $('#log_section').append('<p> At ' + formatTime(date) + ", the patient is " + emotion + ", with confidence " + confidence + '<p>');
+                        // add p tags into rev-info
 
                         // if no data (eg. database is empty), pass
                         if (!data) {
@@ -315,5 +315,5 @@
                 main.classList.remove('active')
             })
         </script>
-    
+
 </body></html>

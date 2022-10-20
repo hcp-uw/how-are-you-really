@@ -336,6 +336,15 @@ header {
     box-sizing: border-box;
 }
 
+.emotion_state{
+    height: 130px;
+    overflow-y: auto;
+}
+
+.emotion_state p{
+    font-size: x-small;
+}
+
 .rev-content{
     background: #fff;
     padding: 1rem;
@@ -351,6 +360,7 @@ header {
 .rev-info{
     margin-bottom: 1rem;
     padding: 1rem;
+    overflow: auto;
 }
 
 .rev-info h1

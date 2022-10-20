@@ -117,7 +117,8 @@ websocket-client==1.4.1
 Werkzeug==2.2.2
 wrapt==1.14.1
 zipp==3.8.1
-tensorflow==2.10.0
+
+# tensorflow==2.10.0
 
 # Conda use below
 six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
