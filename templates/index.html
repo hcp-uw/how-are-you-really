@@ -84,7 +84,7 @@
                     <h3 class="section-head">Medical Record</h3>
                     <div class="analytics">
                         <div class="analytic">
-                            
+
                             <div class="analytic-info">
                                 <h4>Patient</h4>
                                 <h1>John Smith</h1>
@@ -107,7 +107,7 @@
                                 <h1>5<small>hrs</small></h1>
                             </div>
                         </div>
-                        
+
                         <div class="analytic">
                             <div class="analytic-icon">
                                 <i class="fas fa-heart"></i>
@@ -126,7 +126,7 @@
                                 <h1>4</h1>
                             </div>
                         </div><div class="analytic">
-                            
+
                             <div class="analytic-info">
                                 <h4>Insurance</h4>
                                 <h1 style="color: #2ec3a3;">Malia Health Care</h1>
@@ -134,8 +134,8 @@
                         </div></div>
                 </section>
 
-                
-                
+
+
                 <section>
                     <div class="block-grid">
                         <div class="revenue-card">
@@ -146,12 +146,7 @@
                             <h3 class="section-head">Real Time Analysis</h3>
                             <div class="rev-content">
                                 <img src="./youtubelogo.jpg" alt="">
-                                <div class="rev-info">
-                                    <p>10:04:30 The patient is happy with confidence 74% </p>
-                                    <p>10:04:50 The patient is happy with confidence 96% </p>
-                                    <p>10:05:23 The patient is sad with confidence 30% </p>
-                                    <p>10:05:47 The patient is happy with confidence 55% </p>
-                                    <p>10:06:10 The patient is happy with confidence 88% </p>
+                                <div class="rev-info emotion_state" id="log_section">
                                 </div>
                             </div>
                         </div><div class="graph-card">
@@ -178,7 +173,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                     <button onclick="generateReport()" type="button" class="btn btn-lg btn-block btn-outline-success" style="margin: 1em; width: 80%; margin-left: auto; margin-right: auto;">Generate Report</button>
                     <h3 id="revealTitle" class="section-head" style="display:none;">Mental Stability</h3>
@@ -192,7 +187,7 @@
                         height: 20%;
                     }
                 </style>
-                
+
             </main>
         </div>
 
@@ -234,12 +229,16 @@
                     success: function (data) {
                         data = data[0];
                         console.log(data);
+                        let emotion = data.emotion;
+                        let confidence = data.confidence;
+                        $('#log_section').append('<p> ' + formatTime(date) + " - patient is " + emotion + ", with confidence " + confidence + '<p>');
+                        // add p tags into rev-info
 
                         // if no data (eg. database is empty), pass
                         if (!data) {
                             return;
                         }
-
+                        let date = data.timestamp;
                         // if reached max data points, remove first data point
                         if (numData >= maxData) {
                             emotions.shift();
@@ -375,6 +374,4 @@
                 document.getElementById('revealReport').style.display = "grid";
             }
         </script>
-
-    
 </body></html>
