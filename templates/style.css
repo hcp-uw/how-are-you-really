@@ -491,6 +491,13 @@ header {
     }
     .main-content{
         padding: .5rem;
+        position: relative;
+        width: 100%;
+    }
+
+    .chartsBx{
+        grid-template-columns: 1fr;
+        height: auto;
     }
 }
 @media only screen and (max-width:640px){
