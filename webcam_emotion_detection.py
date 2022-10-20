@@ -13,16 +13,12 @@ face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 sessions = {}
 session_id = 0
-<<<<<<< Updated upstream
-analysis_per_session = []
-# "database" storing timestamp, emotion, and confidence
-database = []
-
-=======
 analysis_per_session = {}
->>>>>>> Stashed changes
 # predict emotion in detected face in stream webcam video
 current_frame = 0
+
+# "database" storing timestamp, emotion, and confidence
+database = []
 
 camera = cv2.VideoCapture(0)
 def gen_frames():
@@ -59,6 +55,12 @@ def gen_frames():
                     emotion_detection = ('angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral')
                     emotion_prediction = emotion_detection[max_index]
                     confidence = str(np.max(predictions[0]))
+                    # save data to "database" every second
+                    database.append({
+                        "timestamp": time.time(),
+                        "emotion": emotion_prediction,
+                        "confidence": confidence
+                    })
                     print("The patient is {} with confidence {}".format(emotion_prediction, confidence))
 
                     # logic for mental state:
@@ -156,33 +158,13 @@ def gen_frames():
                         # if len(sessions) > 1:
                         # TODO: compare with prev average
                         session_id +=1
-<<<<<<< Updated upstream
-                
-                    # save data to "database" every second
-                    database.append({
-                        "timestamp": time.time(),
-                        "emotion": emotion_prediction,
-                        "confidence": confidence
-                    })
-                    print("timestamp: {}, emotion: {}, confidence: {}".format(
-                        time.time(),
-                        emotion_prediction,
-                        confidence
-                    ))
-=======
->>>>>>> Stashed changes
             except:
                 pass
 
             # return frames
-<<<<<<< Updated upstream
-            ret, buf = cv2.imencode('.jpg', frame)
-            frame = buf.tobytes()
-=======
             
-            ret, buffer = cv2.imencode('.jpg', frame) #FIXME why it fails?
+            ret, buffer = cv2.imencode('.jpg', frame) 
             frame = buffer.tobytes()
->>>>>>> Stashed changes
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
